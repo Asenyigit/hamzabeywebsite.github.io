@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Genişletilmiş Döner Menü</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f8f9fa;
+            color: #333;
+        }
+        header {
+            background: linear-gradient(90deg, #f0932b, #e84118);
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            font-size: 2em;
+            font-weight: bold;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Slider Stili */
+        .slider-container {
+            position: relative;
+            width: 100%;
+            height: 400px;
+            overflow: hidden;
+        }
+        .slider-slide {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+        .slider-slide.active {
+            opacity: 1;
+        }
+        .slider-text {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: #fff;
+            padding: 10px 20px;
+            font-size: 1.5em;
+            border-radius: 5px;
+        }
+
+        /* Menü ve Ürünler Stili */
+        .section-title {
+            text-align: center;
+            font-size: 1.8em;
+            margin: 40px 0 20px;
+            font-weight: bold;
+            color: black;
+        }
+        .menu-section {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 20px;
+        }
+        .menu-item {
+            width: 200px;
+            padding: 20px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            transition: transform 0.3s;
+            text-align: center;
+        }
+        .menu-item:hover {
+            transform: scale(1.05);
+        }
+        .menu-item h3 {
+            font-size: 1.2em;
+            color: #e84118;
+            margin-bottom: 10px;
+        }
+        .menu-item p {
+            font-size: 1em;
+            color: #555;
+            margin-bottom: 15px;
+        }
+        .menu-item button {
+            background-color: #e84118;
+            color: #fff;
+            border: none;
+            padding: 8px 16px;
+            font-size: 0.9em;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .menu-item button:hover {
+            background-color: #c23616;
+        }
+
+        /* Form ve Sepet Bilgisi */
+        .order-form-container {
+            width: 60%;
+            margin: 0 auto;
+            text-align: left;
+        }
+        .order-form {
+            text-align: center;
+            margin: 40px 0;
+        }
+        .order-form label {
+            display: block;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+            font-weight: bold;
+            text-align: left;
+        }
+        .order-form input {
+            padding: 10px;
+            margin: 10px 0;
+            width: 80%;
+            font-size: 1em;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        .order-form button {
+            padding: 12px 20px;
+            background-color: #e84118;
+            color: white;
+            border: none;
+            font-size: 1.1em;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .order-form button:hover {
+            background-color: #c23616;
+        }
+
+        /* Sepet Bölümü */
+        .cart-section {
+            margin-top: 40px;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+            border-radius: 10px;
+        }
+        .cart-section h3 {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+            color: #e84118;
+        }
+        .cart-items {
+            margin-bottom: 20px;
+        }
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .cart-item span {
+            font-size: 1.1em;
+            color: #333;
+        }
+        .cart-total {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #e84118;
+            text-align: right;
+            margin-bottom: 20px;
+        }
+        .cart-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+        .cart-buttons button {
+            background-color: #e84118;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            font-size: 1.1em;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .cart-buttons button:hover {
+            background-color: #c23616;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    HAMZABEY DÖNER
+</header>
+
+<!-- Slider Başlangıcı -->
+<div class="slider-container">
+    <div class="slider-slide active" style="background-image: url('logohamzabey2.jpg');">
+        <div class="slider-text">Hoşgeldiniz! Lezzet Dolu Anlar</div>
+    </div>
+    <div class="slider-slide" style="background-image: url('logohamzabey2.jpg');">
+        <div class="slider-text">Dönerde Kalite</div>
+    </div>
+    <div class="slider-slide" style="background-image: url('logohamzabey2.jpg');">
+        <div class="slider-text">En İyi Tatlar</div>
+    </div>
+</div>
+
+<!-- Ana Ürünler Bölümü -->
+<div class="section-title">Ana Ürünler</div>
+<div class="menu-section" id="mainDishes">
+    <div class="menu-item">
+        <h3>Et Döner</h3>
+        <p>50 TL</p>
+        <button onclick="addToCart('Et Döner', 50)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Tavuk Döner</h3>
+        <p>30 TL</p>
+        <button onclick="addToCart('Tavuk Döner', 30)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Kebap Döner</h3>
+        <p>45 TL</p>
+        <button onclick="addToCart('Kebap Döner', 45)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Kuzu Döner</h3>
+        <p>55 TL</p>
+        <button onclick="addToCart('Kuzu Döner', 55)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Pide Döner</h3>
+        <p>35 TL</p>
+        <button onclick="addToCart('Pide Döner', 35)">Sepete Ekle</button>
+    </div>
+</div>
+
+
+
+
+<div class="section-title">Ana Ürünler</div>
+<div class="menu-section" id="mainDishes">
+    <div class="menu-item">
+        <h3>Et Döner</h3>
+        <p>50 TL</p>
+        <button onclick="addToCart('Et Döner', 50)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Tavuk Döner</h3>
+        <p>30 TL</p>
+        <button onclick="addToCart('Tavuk Döner', 30)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Kebap Döner</h3>
+        <p>45 TL</p>
+        <button onclick="addToCart('Kebap Döner', 45)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Kuzu Döner</h3>
+        <p>55 TL</p>
+        <button onclick="addToCart('Kuzu Döner', 55)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Pide Döner</h3>
+        <p>35 TL</p>
+        <button onclick="addToCart('Pide Döner', 35)">Sepete Ekle</button>
+    </div>
+</div>
+
+
+
+
+<div class="section-title">Ana Ürünler</div>
+<div class="menu-section" id="mainDishes">
+    <div class="menu-item">
+        <h3>Et Döner</h3>
+        <p>50 TL</p>
+        <button onclick="addToCart('Et Döner', 50)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Tavuk Döner</h3>
+        <p>30 TL</p>
+        <button onclick="addToCart('Tavuk Döner', 30)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Kebap Döner</h3>
+        <p>45 TL</p>
+        <button onclick="addToCart('Kebap Döner', 45)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Kuzu Döner</h3>
+        <p>55 TL</p>
+        <button onclick="addToCart('Kuzu Döner', 55)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Pide Döner</h3>
+        <p>35 TL</p>
+        <button onclick="addToCart('Pide Döner', 35)">Sepete Ekle</button>
+    </div>
+</div>
+
+
+<div class="section-title">Ana Ürünler</div>
+<div class="menu-section" id="mainDishes">
+    <div class="menu-item">
+        <h3>Et Döner</h3>
+        <p>50 TL</p>
+        <button onclick="addToCart('Et Döner', 50)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Tavuk Döner</h3>
+        <p>30 TL</p>
+        <button onclick="addToCart('Tavuk Döner', 30)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Kebap Döner</h3>
+        <p>45 TL</p>
+        <button onclick="addToCart('Kebap Döner', 45)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Kuzu Döner</h3>
+        <p>55 TL</p>
+        <button onclick="addToCart('Kuzu Döner', 55)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Pide Döner</h3>
+        <p>35 TL</p>
+        <button onclick="addToCart('Pide Döner', 35)">Sepete Ekle</button>
+    </div>
+</div>
+
+
+<div class="section-title">Ana Ürünler</div>
+<div class="menu-section" id="mainDishes">
+    <div class="menu-item">
+        <h3>Et Döner</h3>
+        <p>50 TL</p>
+        <button onclick="addToCart('Et Döner', 50)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Tavuk Döner</h3>
+        <p>30 TL</p>
+        <button onclick="addToCart('Tavuk Döner', 30)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Kebap Döner</h3>
+        <p>45 TL</p>
+        <button onclick="addToCart('Kebap Döner', 45)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Kuzu Döner</h3>
+        <p>55 TL</p>
+        <button onclick="addToCart('Kuzu Döner', 55)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Pide Döner</h3>
+        <p>35 TL</p>
+        <button onclick="addToCart('Pide Döner', 35)">Sepete Ekle</button>
+    </div>
+</div>
+
+
+<div class="section-title">Ana Ürünler</div>
+<div class="menu-section" id="mainDishes">
+    <div class="menu-item">
+        <h3>Et Döner</h3>
+        <p>50 TL</p>
+        <button onclick="addToCart('Et Döner', 50)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Tavuk Döner</h3>
+        <p>30 TL</p>
+        <button onclick="addToCart('Tavuk Döner', 30)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Kebap Döner</h3>
+        <p>45 TL</p>
+        <button onclick="addToCart('Kebap Döner', 45)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Kuzu Döner</h3>
+        <p>55 TL</p>
+        <button onclick="addToCart('Kuzu Döner', 55)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Pide Döner</h3>
+        <p>35 TL</p>
+        <button onclick="addToCart('Pide Döner', 35)">Sepete Ekle</button>
+    </div>
+</div>
+
+
+<div class="section-title">Ana Ürünler</div>
+<div class="menu-section" id="mainDishes">
+    <div class="menu-item">
+        <h3>Et Döner</h3>
+        <p>50 TL</p>
+        <button onclick="addToCart('Et Döner', 50)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Tavuk Döner</h3>
+        <p>30 TL</p>
+        <button onclick="addToCart('Tavuk Döner', 30)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Kebap Döner</h3>
+        <p>45 TL</p>
+        <button onclick="addToCart('Kebap Döner', 45)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Kuzu Döner</h3>
+        <p>55 TL</p>
+        <button onclick="addToCart('Kuzu Döner', 55)">Sepete Ekle</button>
+    </div>
+    <div class="menu-item">
+        <h3>Pide Döner</h3>
+        <p>35 TL</p>
+        <button onclick="addToCart('Pide Döner', 35)">Sepete Ekle</button>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+<!-- Sepet Bölümü -->
+<div class="cart-section" id="cartSection">
+    <h3>Sepetiniz</h3>
+    <div class="cart-items" id="cartItems"></div>
+    <div class="cart-total" id="cartTotal">Toplam: 0 TL</div>
+    <div class="cart-buttons">
+        <button onclick="clearCart()">Sepeti Temizle</button>
+        <button onclick="sendOrder()">Siparişi Gönder</button>
+    </div>
+</div>
+
+<!-- Form ve Sepet Bilgisi -->
+<div class="order-form-container">
+    <div class="order-form">
+        <label for="firstName">İsim</label>
+        <input type="text" id="firstName" placeholder="İsim" required>
+        
+        <label for="lastName">Soyisim</label>
+        <input type="text" id="lastName" placeholder="Soyisim" required>
+        
+        <label for="address">Adres</label>
+        <input type="text" id="address" placeholder="Adres" required>
+        
+        <button onclick="sendOrder()">Siparişi Gönder</button>
+    </div>
+</div>
+
+<script>
+    let cart = [];
+
+    // Sepete ürün ekleme fonksiyonu
+    function addToCart(productName, productPrice) {
+        cart.push({ name: productName, price: productPrice });
+        updateCartDisplay();
+    }
+
+    // Sepet güncellemeleri
+    function updateCartDisplay() {
+        let cartItems = document.getElementById('cartItems');
+        let cartTotal = document.getElementById('cartTotal');
+        cartItems.innerHTML = '';
+        let totalPrice = 0;
+
+        cart.forEach(item => {
+            cartItems.innerHTML += `<div class="cart-item"><span>${item.name} - ${item.price} TL</span></div>`;
+            totalPrice += item.price;
+        });
+
+        cartTotal.innerHTML = `Toplam: ${totalPrice} TL`;
+    }
+
+    // Sepeti temizleme fonksiyonu
+    function clearCart() {
+        cart = [];
+        updateCartDisplay();
+    }
+
+    // Siparişi gönderme fonksiyonu
+    function sendOrder() {
+        const firstName = document.getElementById('firstName').value;
+        const lastName = document.getElementById('lastName').value;
+        const address = document.getElementById('address').value;
+
+        if (!firstName || !lastName || !address) {
+            alert('Lütfen tüm bilgileri doldurun!');
+            return;
+        }
+
+        let orderDetails = `Sipariş Detayları:%0A`;
+        orderDetails += `İsim: ${firstName}%0A`;
+        orderDetails += `Soyisim: ${lastName}%0A`;
+        orderDetails += `Adres: ${address}%0A%0A`;
+        
+        orderDetails += `Sepet:%0A`;
+        cart.forEach(item => {
+            orderDetails += `${item.name} - ${item.price} TL%0A`;
+        });
+        const totalPrice = cart.reduce((sum, item) => sum + item.price, 0);
+        orderDetails += `%0AToplam: ${totalPrice} TL`;
+
+        const whatsappUrl = `https://wa.me/905323596469?text=${orderDetails}`;
+        window.open(whatsappUrl, '_blank');
+    }
+
+    // Slider fonksiyonları
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slider-slide');
+
+    function showNextSlide() {
+        slides[currentSlide].classList.remove('active');
+        currentSlide = (currentSlide + 1) % slides.length;
+        slides[currentSlide].classList.add('active');
+    }
+
+    setInterval(showNextSlide, 3000); // Her 3 saniyede bir sonraki slide göster
+</script>
+
+</body>
+</html>
